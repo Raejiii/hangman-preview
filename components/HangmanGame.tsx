@@ -113,7 +113,7 @@ export default function HangmanGame() {
   }, [targetWord])
 
   const currentLevelName = useMemo(() => {
-    return LEVELS[levelIndex]?.name ?? `Level ${levelIndex + 1}`
+    return String(levelIndex + 1)
   }, [levelIndex])
 
   useEffect(() => {
@@ -122,6 +122,30 @@ export default function HangmanGame() {
     if (hasWon) setStatus("won")
     else if (wrong >= MAX_WRONG) setStatus("lost")
   }, [guessed, wrong, targetWord, status])
+
+  // Auto-advance: when a word is guessed, move to next word; after last word, move to next level
+  useEffect(() => {
+    if (status !== "won") return
+    const timer = setTimeout(() => {
+      const words = LEVELS[levelIndex]?.words ?? []
+      const nextW = wordIndex + 1
+      if (nextW < words.length) {
+        setWordIndex(nextW)
+        setTargetWord(pickWord(levelIndex, nextW))
+      } else {
+        const nextLevel = (levelIndex + 1) % LEVELS.length
+        setLevelIndex(nextLevel)
+        setWordIndex(0)
+        setTargetWord(pickWord(nextLevel, 0))
+      }
+      setGuessed(new Set())
+      setWrong(0)
+      setStatus("playing")
+      setIsPaused(false)
+      setShowSidebar(false)
+    }, 1000) // brief pause so kids see the success
+    return () => clearTimeout(timer)
+  }, [status, levelIndex, wordIndex])
 
   const onGuess = (letter: string) => {
     if (status !== "playing" || isPaused) return
@@ -235,6 +259,10 @@ export default function HangmanGame() {
         style={{ width: BASE_WIDTH, height: BASE_HEIGHT, transform: `scale(${scale})`, transformOrigin: "top center" }}
         className="relative z-10 will-change-transform"
       >
+        {/* Top-left badge: guesses left */}
+        <div className="absolute top-16 left-2 bg-white text-black rounded-lg px-3 py-1 shadow-md border border-gray-200">
+          <span className="luckiest-guy-regular text-sm tracking-wide">Guesses left: {Math.max(0, MAX_WRONG - wrong)}</span>
+        </div>
         
         {/* Header */}
         <div className="w-full pt-2 pb-2">
