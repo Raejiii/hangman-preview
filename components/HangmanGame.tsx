@@ -221,7 +221,7 @@ export default function HangmanGame() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: "url('/10148867.jpg')",
+          backgroundImage: "url('/Desktop_Hangman_Game.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
