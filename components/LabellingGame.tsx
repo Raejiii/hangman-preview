@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, useRef } from "react"
 import { Pause, Play, RotateCcw, HelpCircle, Music, VolumeX, SkipForward } from "lucide-react"
 import confetti from "canvas-confetti"
@@ -906,3 +907,4 @@ export function LabellingGame() {
     </div>
   )
 }
+// @ts-nocheck

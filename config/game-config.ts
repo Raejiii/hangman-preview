@@ -1,4 +1,63 @@
-export const gameConfig = {
+type Difficulty = "easy" | "medium" | "hard"
+
+interface AudioMap {
+  background: string
+  success: string
+  uiClick: string
+  connect: string
+  incorrect: string
+  effect: string
+  levelWin: string
+  clap: string
+  instructions: string
+  start: string
+}
+
+interface LabelPosition {
+  id: string
+  x: number
+  y: number
+  label: string
+  targetX: number
+  targetY: number
+}
+
+interface Scenario {
+  id: number
+  name: string
+  difficulty: Difficulty | string
+  title: string
+  image: string
+  labelPositions: LabelPosition[]
+  labels: string[]
+}
+
+interface Dot {
+  number: number
+  x: number // percentage (0-100)
+  y: number // percentage (0-100)
+}
+
+interface Shape {
+  name: string
+  difficulty: Difficulty
+  image: string
+  dots: Dot[]
+}
+
+interface GameConfig {
+  gameTitle: string
+  instructions: string
+  audio: AudioMap
+  splashScreen: {
+    logo: string
+    duration: number
+  }
+  scenarios: Scenario[]
+  shapes: Shape[]
+}
+
+export const gameConfig: GameConfig = {
   gameTitle: "Labelling Game",
   instructions: "Drag the correct labels to their matching positions on the image!",
   audio: {
@@ -81,6 +140,87 @@ export const gameConfig = {
         { id: "headlight", x: 5, y: 50, label: "HEADLIGHT", targetX: 9, targetY: 57.6 },
       ],
       labels: ["WINDSHIELD", "HOOD", "DOOR", "WHEEL", "TRUNK", "HEADLIGHT"],
+    },
+  ],
+  // Shapes used by ConnectTheDotsGame
+  shapes: [
+    {
+      name: "Bee Outline",
+      difficulty: "easy",
+      image: "/simple-bee-anatomy-clean.jpg",
+      dots: [
+        { number: 1, x: 18, y: 30 },
+        { number: 2, x: 30, y: 22 },
+        { number: 3, x: 48, y: 28 },
+        { number: 4, x: 63, y: 40 },
+        { number: 5, x: 70, y: 55 },
+        { number: 6, x: 60, y: 70 },
+        { number: 7, x: 40, y: 72 },
+        { number: 8, x: 22, y: 60 },
+      ],
+    },
+    {
+      name: "Human Body",
+      difficulty: "easy",
+      image: "/simple-human-body-clean.jpg",
+      dots: [
+        { number: 1, x: 50, y: 12 },
+        { number: 2, x: 40, y: 28 },
+        { number: 3, x: 60, y: 28 },
+        { number: 4, x: 42, y: 50 },
+        { number: 5, x: 58, y: 50 },
+        { number: 6, x: 45, y: 72 },
+        { number: 7, x: 55, y: 72 },
+        { number: 8, x: 50, y: 90 },
+      ],
+    },
+    {
+      name: "Plant",
+      difficulty: "medium",
+      image: "/simple-plant-clean.jpg",
+      dots: [
+        { number: 1, x: 50, y: 10 },
+        { number: 2, x: 35, y: 25 },
+        { number: 3, x: 65, y: 25 },
+        { number: 4, x: 50, y: 45 },
+        { number: 5, x: 40, y: 65 },
+        { number: 6, x: 60, y: 65 },
+        { number: 7, x: 50, y: 85 },
+      ],
+    },
+    {
+      name: "Car",
+      difficulty: "medium",
+      image: "/simple-car-clean.jpg",
+      dots: [
+        { number: 1, x: 12, y: 60 },
+        { number: 2, x: 22, y: 55 },
+        { number: 3, x: 40, y: 58 },
+        { number: 4, x: 60, y: 58 },
+        { number: 5, x: 78, y: 54 },
+        { number: 6, x: 90, y: 52 },
+        { number: 7, x: 82, y: 70 },
+        { number: 8, x: 62, y: 68 },
+        { number: 9, x: 40, y: 68 },
+        { number: 10, x: 22, y: 65 },
+      ],
+    },
+    {
+      name: "Solar System",
+      difficulty: "hard",
+      image: "/simple-solar-system-clean.jpg",
+      dots: [
+        { number: 1, x: 15, y: 50 },
+        { number: 2, x: 28, y: 50 },
+        { number: 3, x: 40, y: 50 },
+        { number: 4, x: 52, y: 50 },
+        { number: 5, x: 64, y: 50 },
+        { number: 6, x: 76, y: 50 },
+        { number: 7, x: 88, y: 50 },
+        { number: 8, x: 76, y: 38 },
+        { number: 9, x: 64, y: 62 },
+        { number: 10, x: 52, y: 38 },
+      ],
     },
   ],
 }

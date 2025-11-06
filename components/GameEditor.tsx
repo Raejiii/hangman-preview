@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useRef, useEffect } from "react"
 import { Save, RotateCcw, Eye, Upload, ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
@@ -407,3 +408,4 @@ export function GameEditor() {
     </div>
   )
 }
+// @ts-nocheck

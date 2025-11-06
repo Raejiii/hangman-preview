@@ -4,30 +4,47 @@ import confetti from "canvas-confetti"
 import { gameConfig } from "../config/game-config"
 
 export function ConnectTheDotsGame() {
+  type Difficulty = "easy" | "medium" | "hard" | "all"
+  type AudioName = keyof typeof gameConfig.audio
+  interface Dot {
+    number: number
+    x: number
+    y: number
+  }
+  interface Shape {
+    name: string
+    difficulty: Exclude<Difficulty, "all">
+    image: string
+    dots: Dot[]
+  }
+  interface Point { x: number; y: number }
+  interface Line { start: Point; end: Point }
+  interface CurrentLine extends Line { startDot: Dot }
   const [showSplash, setShowSplash] = useState(true)
-  const [gameState, setGameState] = useState("start")
+  const [gameState, setGameState] = useState<"start" | "playing" | "paused" | "help" | "allComplete">("start")
   const [showOverlay, setShowOverlay] = useState(true)
   const [showSidebar, setShowSidebar] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [floatingText, setFloatingText] = useState({ text: "", show: false })
+  const [floatingText, setFloatingText] = useState<{ text: string; show: boolean }>({ text: "", show: false })
   const [isSplashFading, setIsSplashFading] = useState(false)
   const [currentShapeIndex, setCurrentShapeIndex] = useState(0)
-  const [currentShape, setCurrentShape] = useState(gameConfig.shapes[0]) // Initialize with first shape
-  const [connectedDots, setConnectedDots] = useState([])
-  const [lines, setLines] = useState([])
-  const [currentLine, setCurrentLine] = useState(null)
+  const [currentShape, setCurrentShape] = useState<Shape>(gameConfig.shapes[0]) // Initialize with first shape
+  const [connectedDots, setConnectedDots] = useState<number[]>([])
+  const [lines, setLines] = useState<Line[]>([])
+  const [currentLine, setCurrentLine] = useState<CurrentLine | null>(null)
   const [nextDotNumber, setNextDotNumber] = useState(1)
   const [isShapeComplete, setIsShapeComplete] = useState(false)
   const [showShapeImage, setShowShapeImage] = useState(false)
-  const [isDrawing, setIsDrawing] = useState(false) // Fixed: removed circular reference
-  const [startDot, setStartDot] = useState(null)
+  const [isDrawing, setIsDrawing] = useState(false)
+  const [startDot, setStartDot] = useState<Dot | null>(null)
   const [currentLevel, setCurrentLevel] = useState(1)
-  const [totalLevels] = useState(gameConfig.shapes.length)
-  const [difficulty, setDifficulty] = useState("all") // "easy", "medium", "hard", "all"
-  const [filteredShapes, setFilteredShapes] = useState(gameConfig.shapes)
-  const audioRefs = useRef({})
-  const gameAreaRef = useRef(null)
-  const svgRef = useRef(null)
+  const [totalLevels] = useState<number>(gameConfig.shapes.length)
+  const [difficulty, setDifficulty] = useState<Difficulty>("all")
+  const [filteredShapes, setFilteredShapes] = useState<Shape[]>(gameConfig.shapes)
+  const audioRefs = useRef<Record<string, HTMLAudioElement>>({})
+  const gameAreaRef = useRef<HTMLDivElement | null>(null)
+  const svgRef = useRef<SVGSVGElement | null>(null)
+  const DIFFICULTIES: Difficulty[] = ["easy", "medium", "hard", "all"]
 
   useEffect(() => {
     const fadeTimer = setTimeout(() => {
@@ -75,7 +92,7 @@ export function ConnectTheDotsGame() {
     }
   }, [difficulty])
 
-  const playAudio = (name, loop = false) => {
+  const playAudio = (name: AudioName, loop = false) => {
     if (!isMuted) {
       if (!audioRefs.current[name]) {
         audioRefs.current[name] = new Audio(gameConfig.audio[name])
@@ -88,14 +105,14 @@ export function ConnectTheDotsGame() {
         if (name === "connect") {
           audioRefs.current[name].currentTime = 0
         }
-        audioRefs.current[name].play().catch((error) => {
+        audioRefs.current[name].play().catch((error: unknown) => {
           console.error(`Error playing audio ${name}:`, error)
         })
       }
     }
   }
 
-  const pauseAudio = (name) => {
+  const pauseAudio = (name: AudioName) => {
     if (audioRefs.current[name]) {
       audioRefs.current[name].pause()
     }
@@ -121,7 +138,7 @@ export function ConnectTheDotsGame() {
     }
   }
 
-  const resetGame = () => {
+  const resetGame = (): void => {
     setCurrentShapeIndex(0)
     setCurrentLevel(1)
     loadShape(0)
@@ -131,7 +148,7 @@ export function ConnectTheDotsGame() {
     stopAllAudio()
   }
 
-  const loadShape = (shapeIndex) => {
+  const loadShape = (shapeIndex: number) => {
     const shapesToUse = filteredShapes.length > 0 ? filteredShapes : gameConfig.shapes
     if (!shapesToUse || !shapesToUse[shapeIndex]) {
       console.error("Shape not found at index:", shapeIndex)
@@ -150,7 +167,7 @@ export function ConnectTheDotsGame() {
     setStartDot(null)
   }
 
-  const nextShape = () => {
+  const nextShape = (): void => {
     const shapesToUse = filteredShapes.length > 0 ? filteredShapes : gameConfig.shapes
     if (!shapesToUse || !shapesToUse.length) return
 
@@ -161,7 +178,7 @@ export function ConnectTheDotsGame() {
     playAudio("uiClick")
   }
 
-  const autoAdvanceToNextLevel = () => {
+  const autoAdvanceToNextLevel = (): void => {
     const shapesToUse = filteredShapes.length > 0 ? filteredShapes : gameConfig.shapes
     if (!shapesToUse || !shapesToUse.length) return
 
@@ -192,7 +209,7 @@ export function ConnectTheDotsGame() {
     }
   }
 
-  const setDifficultyLevel = (newDifficulty) => {
+  const setDifficultyLevel = (newDifficulty: Difficulty) => {
     setDifficulty(newDifficulty)
     setCurrentShapeIndex(0)
     setCurrentLevel(1)
@@ -205,7 +222,7 @@ export function ConnectTheDotsGame() {
     playAudio("uiClick")
   }
 
-  const startGame = () => {
+  const startGame = (): void => {
     setGameState("playing")
     setShowOverlay(false)
     setShowSidebar(false)
@@ -213,12 +230,12 @@ export function ConnectTheDotsGame() {
     playAudio("start")
   }
 
-  const playConfetti = () => {
+  const playConfetti = (): void => {
     const duration = 3 * 1000
     const animationEnd = Date.now() + duration
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 }
 
-    function randomInRange(min, max) {
+    function randomInRange(min: number, max: number) {
       return Math.random() * (max - min) + min
     }
 
@@ -240,7 +257,7 @@ export function ConnectTheDotsGame() {
     }, 250)
   }
 
-  const getDotPosition = (dot) => {
+  const getDotPosition = (dot: Dot) => {
     if (!gameAreaRef.current) return { x: 0, y: 0 }
     const rect = gameAreaRef.current.getBoundingClientRect()
     return {
@@ -249,7 +266,7 @@ export function ConnectTheDotsGame() {
     }
   }
 
-  const getEventPoint = (e) => {
+  const getEventPoint = (e: any) => {
     if (e.touches && e.touches.length > 0) {
       return { x: e.touches[0].clientX, y: e.touches[0].clientY }
     } else if (e.changedTouches && e.changedTouches.length > 0) {
@@ -258,33 +275,20 @@ export function ConnectTheDotsGame() {
     return { x: e.clientX, y: e.clientY }
   }
 
-  const getTouchedDot = (point) => {
+  const getTouchedDot = (point: Point) => {
     if (!gameAreaRef.current || !currentShape) return null
     const rect = gameAreaRef.current.getBoundingClientRect()
     const relativeX = ((point.x - rect.left) / rect.width) * 100
     const relativeY = ((point.y - rect.top) / rect.height) * 100
 
-    return currentShape.dots.find((dot) => {
+    return currentShape.dots.find((dot: Dot) => {
       const distance = Math.sqrt(Math.pow(dot.x - relativeX, 2) + Math.pow(dot.y - relativeY, 2))
       return distance < 8 // 8% tolerance for touch
     })
   }
 
-  const handleDotClick = (dot) => {
-    // This function is now only used for direct clicks, not drag operations
-    if (gameState !== "playing" || isShapeComplete || !currentShape) return
 
-    // For direct clicks, just highlight the next expected dot
-    if (dot.number !== nextDotNumber) {
-      playAudio("incorrect")
-      setFloatingText({ text: `Start with dot ${nextDotNumber}!`, show: true })
-      setTimeout(() => {
-        setFloatingText({ text: "", show: false })
-      }, 1000)
-    }
-  }
-
-  const handleInteractionStart = (e) => {
+  const handleInteractionStart = (e: any) => {
     e.preventDefault()
     if (gameState !== "playing" || isShapeComplete) return
 
@@ -308,7 +312,7 @@ export function ConnectTheDotsGame() {
     }
   }
 
-  const handleInteractionMove = (e) => {
+  const handleInteractionMove = (e: any) => {
     e.preventDefault()
     if (!isDrawing || !svgRef.current) return
 
@@ -328,6 +332,7 @@ export function ConnectTheDotsGame() {
 
     // If we're hovering over the correct next dot, automatically connect to it
     if (hoveredDot && hoveredDot.number === expectedNext && hoveredDot !== startDot) {
+      if (!startDot) return
       const startPosition = getDotPosition(startDot)
       const endPosition = getDotPosition(hoveredDot)
 
@@ -378,7 +383,7 @@ export function ConnectTheDotsGame() {
     }
   }
 
-  const handleInteractionEnd = (e) => {
+  const handleInteractionEnd = (e: any) => {
     e.preventDefault()
     if (!currentLine || !isDrawing) return
 
@@ -391,6 +396,7 @@ export function ConnectTheDotsGame() {
 
       if (endDot.number === expectedNext) {
         // Correct connection!
+        if (!startDot) return
         const startPosition = getDotPosition(startDot)
         const endPosition = getDotPosition(endDot)
 
@@ -506,15 +512,10 @@ export function ConnectTheDotsGame() {
       <div
         className="fixed inset-0 bg-[#000B18] pointer-events-none"
         style={{
-          backgroundImage: `\
-  radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),\
-  radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),\
-  radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px),\
-  radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px)\
-`,
-          backgroundSize: "550px 550px, 350px 350px, 250px 250px, 150px 150px",
-          backgroundPosition: "0 0, 40px 60px, 130px 270px, 70px 100px",
-          animation: "backgroundScroll 60s linear infinite",
+          backgroundImage: "url('/Desktop_Hangman_Game.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
@@ -722,7 +723,7 @@ export function ConnectTheDotsGame() {
                   <div className="mb-6">
                     <p className="text-sm font-semibold mb-2">Choose Difficulty:</p>
                     <div className="flex flex-wrap gap-2 justify-center">
-                      {["easy", "medium", "hard", "all"].map((diff) => (
+                      {DIFFICULTIES.map((diff) => (
                         <button
                           key={diff}
                           onClick={() => setDifficultyLevel(diff)}

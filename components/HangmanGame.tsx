@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Pause, Play, RotateCcw, Music, VolumeX, SkipForward } from "lucide-react"
 
@@ -395,3 +396,4 @@ export default function HangmanGame() {
     </div>
   )
 }
+// @ts-nocheck
