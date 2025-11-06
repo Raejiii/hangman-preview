@@ -366,7 +366,7 @@ export default function HangmanGame() {
 
             {/* Actions */}
             <div className="mt-4 flex items-center justify-center gap-3">
-              {(status === "won" || status === "lost") && (
+              {status === "lost" && (
                 <button onClick={reset} className="btn-3d-red">
                   Play Again
                 </button>
