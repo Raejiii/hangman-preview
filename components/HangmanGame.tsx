@@ -36,9 +36,16 @@ export default function HangmanGame() {
   const [showSidebar, setShowSidebar] = useState<boolean>(false)
   const [levelIndex, setLevelIndex] = useState<number>(0)
   const [wordIndex, setWordIndex] = useState<number>(0)
+  const [isPortrait, setIsPortrait] = useState<boolean>(false)
+  const [isSmallLandscape, setIsSmallLandscape] = useState<boolean>(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const BASE_WIDTH = 1100
   const BASE_HEIGHT = 750
+  const PORTRAIT_BASE_WIDTH = 540
+  const PORTRAIT_BASE_HEIGHT = 960
+  const SMALL_LANDSCAPE_BASE_WIDTH = 780
+  const SMALL_LANDSCAPE_BASE_HEIGHT = 520
+  const PADDING = 12 // small margin so content never touches edges
 
   // Pick a word for given level and word index
   const pickWord = (lvlIdx: number, wIdx: number) => {
@@ -62,7 +69,21 @@ export default function HangmanGame() {
     const computeScale = () => {
       const vw = window.innerWidth
       const vh = window.innerHeight
-      const s = Math.min(vw / BASE_WIDTH, vh / BASE_HEIGHT)
+      const portrait = vh > vw
+      const smallLandscape = !portrait && (vw <= 800 || vh <= 420)
+      const BW = portrait
+        ? PORTRAIT_BASE_WIDTH
+        : smallLandscape
+        ? SMALL_LANDSCAPE_BASE_WIDTH
+        : BASE_WIDTH
+      const BH = portrait
+        ? PORTRAIT_BASE_HEIGHT
+        : smallLandscape
+        ? SMALL_LANDSCAPE_BASE_HEIGHT
+        : BASE_HEIGHT
+      const s = Math.min((vw - PADDING) / BW, (vh - PADDING) / BH)
+      setIsPortrait(portrait)
+      setIsSmallLandscape(smallLandscape)
       // avoid upscaling beyond 1 to preserve crispness
       setScale(Math.min(1, s))
     }
@@ -194,7 +215,7 @@ export default function HangmanGame() {
   ]
 
   return (
-    <div className="h-screen w-screen relative text-white overflow-hidden flex items-center justify-center">
+    <div className="h-[100dvh] w-[100vw] relative text-white overflow-hidden flex items-center justify-center">
       {/* Full-viewport background image */}
       <div
         className="absolute inset-0"
@@ -260,7 +281,7 @@ export default function HangmanGame() {
       {/* Scaled game canvas with fixed base size */}
       <div
         ref={containerRef}
-        style={{ width: BASE_WIDTH, height: BASE_HEIGHT, transform: `scale(${scale})`, transformOrigin: "top center" }}
+        style={{ width: isPortrait ? PORTRAIT_BASE_WIDTH : isSmallLandscape ? SMALL_LANDSCAPE_BASE_WIDTH : BASE_WIDTH, height: isPortrait ? PORTRAIT_BASE_HEIGHT : isSmallLandscape ? SMALL_LANDSCAPE_BASE_HEIGHT : BASE_HEIGHT, transform: `scale(${scale})`, transformOrigin: "center" }}
         className="relative z-10 will-change-transform"
       >
         {/* Top-left badge: guesses left */}
@@ -279,8 +300,8 @@ export default function HangmanGame() {
           </h1>
         </div>
 
-        {/* Main layout: two columns filling remaining height */}
-        <div style={{ height: BASE_HEIGHT - 86 }} className="px-4 grid grid-cols-2 gap-6">
+        {/* Main layout: columns adapt by orientation, filling remaining height */}
+        <div style={{ height: (isPortrait ? PORTRAIT_BASE_HEIGHT : isSmallLandscape ? SMALL_LANDSCAPE_BASE_HEIGHT : BASE_HEIGHT) - 86 }} className={`px-4 grid ${isPortrait ? "grid-cols-1" : "grid-cols-2"} gap-6`}>
           {/* Left: Word on wood board + keyboard */}
           <div className="relative rounded-2xl bg-transparent p-5 flex flex-col">
             {/* Hint banner above guess area */}
