@@ -178,12 +178,12 @@ export default function HangmanGame() {
       <line x1="120" y1="20" x2="120" y2="40" stroke="#654321" strokeWidth="6" />
 
       {/* Body parts appear with wrong count */}
-      {wrong > 0 && <circle cx="120" cy="55" r="15" stroke="#fff" strokeWidth="4" fill="none" />}
-      {wrong > 1 && <line x1="120" y1="70" x2="120" y2="110" stroke="#fff" strokeWidth="4" />}
-      {wrong > 2 && <line x1="120" y1="80" x2="100" y2="95" stroke="#fff" strokeWidth="4" />}
-      {wrong > 3 && <line x1="120" y1="80" x2="140" y2="95" stroke="#fff" strokeWidth="4" />}
-      {wrong > 4 && <line x1="120" y1="110" x2="105" y2="135" stroke="#fff" strokeWidth="4" />}
-      {wrong > 5 && <line x1="120" y1="110" x2="135" y2="135" stroke="#fff" strokeWidth="4" />}
+      {wrong > 0 && <circle cx="120" cy="55" r="15" stroke="#000" strokeWidth="4" fill="none" />}
+      {wrong > 1 && <line x1="120" y1="70" x2="120" y2="110" stroke="#000" strokeWidth="4" />}
+      {wrong > 2 && <line x1="120" y1="80" x2="100" y2="95" stroke="#000" strokeWidth="4" />}
+      {wrong > 3 && <line x1="120" y1="80" x2="140" y2="95" stroke="#000" strokeWidth="4" />}
+      {wrong > 4 && <line x1="120" y1="110" x2="105" y2="135" stroke="#000" strokeWidth="4" />}
+      {wrong > 5 && <line x1="120" y1="110" x2="135" y2="135" stroke="#000" strokeWidth="4" />}
     </svg>
   )
 
@@ -290,7 +290,7 @@ export default function HangmanGame() {
                 boxShadow: "0 8px 16px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8)",
               }}
             >
-              <p className="text-sm sm:text-base luckiest-guy-regular text-black tracking-wide" style={{ letterSpacing: "0.03em" }}>
+              <p className="text-sm sm:text-base cabin-sketch-bold text-black tracking-wide" style={{ letterSpacing: "0.03em" }}>
                 Hint: {hintText}
               </p>
             </div>
@@ -355,11 +355,6 @@ export default function HangmanGame() {
               {(status === "won" || status === "lost") && (
                 <button onClick={reset} className="btn-3d-red">
                   Play Again
-                </button>
-              )}
-              {status === "playing" && (
-                <button onClick={reset} className="btn-3d-red" title="Reset current round">
-                  Reset
                 </button>
               )}
             </div>
