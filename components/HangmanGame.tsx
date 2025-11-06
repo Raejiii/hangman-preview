@@ -281,7 +281,7 @@ export default function HangmanGame() {
           <div className="relative rounded-2xl bg-transparent p-5 flex flex-col">
             {/* Hint banner above guess area */}
             <div
-              className="inline-block bg-white rounded-lg px-3 py-2 mb-3 border-2 border-gray-300 self-center"
+              className="inline-block bg-white rounded-lg px-3 py-2 mt-2 mb-3 border-2 border-gray-300 self-center"
               style={{
                 boxShadow: "0 8px 16px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8)",
               }}
@@ -369,14 +369,7 @@ export default function HangmanGame() {
         
 
         {/* Pause Overlay */}
-        {isPaused && status === "playing" && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-2xl">
-            <div className="bg-white/95 text-black rounded-xl p-6 shadow-xl text-center">
-              <div className="text-2xl font-bold mb-4">Paused</div>
-              <button onClick={togglePause} className="btn-3d-red">Resume</button>
-            </div>
-          </div>
-        )}
+        {/* Removed pause overlay */}
       </div>
     </div>
   )
