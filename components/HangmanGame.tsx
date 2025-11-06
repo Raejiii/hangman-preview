@@ -3,21 +3,27 @@ import { Pause, Play, RotateCcw, Music, VolumeX, SkipForward } from "lucide-reac
 
 type GameStatus = "start" | "playing" | "won" | "lost"
 
-const WORDS = [
-  "JAVASCRIPT",
-  "REACT",
-  "HANGMAN",
-  "DEVELOPER",
-  "PROGRAM",
-  "COMPUTER",
-  "ALGORITHM",
-  "FUNCTION",
-  "VARIABLE",
-  "COMPILER",
+const LEVELS: { name: string; words: string[] }[] = [
+  { name: "Easy", words: ["CAT", "DOG", "SUN", "BALL"] },
+  { name: "Medium", words: ["BIRD", "FISH", "TREE", "MOON"] },
+  { name: "Hard", words: ["APPLE", "HOUSE"] },
 ]
 
 const ALPHABET = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))
 const MAX_WRONG = 6
+
+const HINTS: Record<string, string> = {
+  CAT: "A small animal that says meow",
+  DOG: "A friendly pet that barks",
+  BIRD: "An animal that can fly",
+  FISH: "An animal that swims",
+  APPLE: "A round red or green fruit",
+  BALL: "A round toy you can throw",
+  HOUSE: "A place where people live",
+  TREE: "A tall plant with leaves",
+  SUN: "The bright star in the sky",
+  MOON: "The big round rock in the night sky",
+}
 
 export default function HangmanGame() {
   const [targetWord, setTargetWord] = useState<string>("")
@@ -29,22 +35,23 @@ export default function HangmanGame() {
   const [isMuted, setIsMuted] = useState<boolean>(false)
   const [showSidebar, setShowSidebar] = useState<boolean>(false)
   const [levelIndex, setLevelIndex] = useState<number>(0)
+  const [wordIndex, setWordIndex] = useState<number>(0)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const BASE_WIDTH = 1100
   const BASE_HEIGHT = 750
 
-  // Pick a word by index or randomly
-  const pickWord = (idx?: number) => {
-    if (typeof idx === "number") return WORDS[idx % WORDS.length]
-    return WORDS[Math.floor(Math.random() * WORDS.length)]
+  // Pick a word for given level and word index
+  const pickWord = (lvlIdx: number, wIdx: number) => {
+    const words = LEVELS[lvlIdx]?.words ?? []
+    const safeIdx = words.length > 0 ? wIdx % words.length : 0
+    return words[safeIdx] ?? ""
   }
 
   useEffect(() => {
-    // Initialize with a random word and set corresponding level index
-    const initial = pickWord()
-    setTargetWord(initial)
-    const i = WORDS.indexOf(initial)
-    setLevelIndex(i >= 0 ? i : 0)
+    // Initialize at first level and first word
+    setLevelIndex(0)
+    setWordIndex(0)
+    setTargetWord(pickWord(0, 0))
     setGuessed(new Set())
     setWrong(0)
     setStatus("playing")
@@ -70,12 +77,21 @@ export default function HangmanGame() {
     setStatus("playing")
     setIsPaused(false)
     setShowSidebar(false)
+    setTargetWord(pickWord(levelIndex, wordIndex))
   }
 
   const nextWord = () => {
-    const nextIndex = (levelIndex + 1) % WORDS.length
-    setLevelIndex(nextIndex)
-    setTargetWord(pickWord(nextIndex))
+    const words = LEVELS[levelIndex]?.words ?? []
+    const nextW = wordIndex + 1
+    if (nextW < words.length) {
+      setWordIndex(nextW)
+      setTargetWord(pickWord(levelIndex, nextW))
+    } else {
+      const nextLevel = (levelIndex + 1) % LEVELS.length
+      setLevelIndex(nextLevel)
+      setWordIndex(0)
+      setTargetWord(pickWord(nextLevel, 0))
+    }
     setGuessed(new Set())
     setWrong(0)
     setStatus("playing")
@@ -90,6 +106,15 @@ export default function HangmanGame() {
       .map((ch) => (guessed.has(ch) ? ch : "_"))
       .join(" ")
   }, [targetWord, guessed])
+
+  const hintText = useMemo(() => {
+    if (!targetWord) return ""
+    return HINTS[targetWord] || "Try to guess the hidden word!"
+  }, [targetWord])
+
+  const currentLevelName = useMemo(() => {
+    return LEVELS[levelIndex]?.name ?? `Level ${levelIndex + 1}`
+  }, [levelIndex])
 
   useEffect(() => {
     if (!targetWord || status !== "playing") return
@@ -213,7 +238,7 @@ export default function HangmanGame() {
         
         {/* Header */}
         <div className="w-full pt-2 pb-2">
-          <h1 className="text-center luckiest-guy-regular text-[42px] tracking-wide drop-shadow-lg">
+          <h1 className="text-center luckiest-guy-regular text-[42px] tracking-wide drop-shadow-lg text-black">
             HANGMAN GAME
           </h1>
         </div>
@@ -222,6 +247,24 @@ export default function HangmanGame() {
         <div style={{ height: BASE_HEIGHT - 86 }} className="px-4 grid grid-cols-2 gap-6">
           {/* Left: Word on wood board + keyboard */}
           <div className="relative rounded-2xl bg-gradient-to-b from-[#0a1a2f] to-[#0b1220] p-5 border border-white/10 flex flex-col">
+            {/* Level badge */}
+            <div
+              className="inline-block bg-blue-500 text-white rounded-lg px-3 py-1 mb-2 self-center shadow-md"
+              aria-label={`Current level: ${currentLevelName}`}
+            >
+              <span className="text-sm sm:text-base luckiest-guy-regular tracking-wide">Level: {currentLevelName}</span>
+            </div>
+            {/* Hint banner above guess area */}
+            <div
+              className="inline-block bg-white rounded-lg px-3 py-2 mb-3 border-2 border-gray-300 self-center"
+              style={{
+                boxShadow: "0 8px 16px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8)",
+              }}
+            >
+              <p className="text-sm sm:text-base luckiest-guy-regular text-black tracking-wide" style={{ letterSpacing: "0.03em" }}>
+                Hint: {hintText}
+              </p>
+            </div>
             {/* Wood board word area */}
             <div
               className="relative mx-auto w-full max-w-[520px] rounded-xl shadow-lg"
