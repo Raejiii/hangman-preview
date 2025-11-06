@@ -187,7 +187,11 @@ export default function HangmanGame() {
     </svg>
   )
 
-  const KEY_ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"]
+  const KEY_ROWS = [
+    ALPHABET.slice(0, 9).join(""),
+    ALPHABET.slice(9, 18).join(""),
+    ALPHABET.slice(18).join("")
+  ]
 
   return (
     <div className="h-screen w-screen relative text-white overflow-hidden flex items-center justify-center">
@@ -298,8 +302,17 @@ export default function HangmanGame() {
               }}
             >
               <div className="relative z-10 flex items-center justify-center h-full px-6 py-8">
-                <div className="text-center luckiest-guy-regular text-4xl tracking-wider text-black">
-                  {display}
+                <div className="flex items-center justify-center gap-3">
+                  {targetWord.split("").map((ch, idx) => (
+                    <div
+                      key={`${ch}-${idx}`}
+                      className="w-12 h-16 border-4 border-black rounded-lg bg-transparent flex items-center justify-center"
+                    >
+                      <span className="cabin-sketch-bold text-black text-4xl tracking-wider">
+                        {guessed.has(ch) ? ch : ""}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
