@@ -261,7 +261,11 @@ export default function HangmanGame() {
       >
         {/* Top-left badge: guesses left */}
         <div className="absolute top-16 left-2 bg-white text-black rounded-lg px-3 py-1 shadow-md border border-gray-200">
-          <span className="luckiest-guy-regular text-sm tracking-wide">Guesses left: {Math.max(0, MAX_WRONG - wrong)}</span>
+          <span className="cabin-sketch-bold text-sm tracking-wide uppercase">Guesses left: {Math.max(0, MAX_WRONG - wrong)}</span>
+        </div>
+        {/* Top-right badge: level */}
+        <div className="absolute top-16 right-2 bg-white text-black rounded-lg px-3 py-1 shadow-md border border-gray-200">
+          <span className="cabin-sketch-bold text-sm tracking-wide uppercase">Level: {currentLevelName}</span>
         </div>
         
         {/* Header */}
@@ -275,13 +279,6 @@ export default function HangmanGame() {
         <div style={{ height: BASE_HEIGHT - 86 }} className="px-4 grid grid-cols-2 gap-6">
           {/* Left: Word on wood board + keyboard */}
           <div className="relative rounded-2xl bg-transparent p-5 flex flex-col">
-            {/* Level badge */}
-            <div
-              className="inline-block bg-blue-500 text-white rounded-lg px-3 py-1 mb-2 self-center shadow-md"
-              aria-label={`Current level: ${currentLevelName}`}
-            >
-              <span className="text-sm sm:text-base luckiest-guy-regular tracking-wide">Level: {currentLevelName}</span>
-            </div>
             {/* Hint banner above guess area */}
             <div
               className="inline-block bg-white rounded-lg px-3 py-2 mb-3 border-2 border-gray-300 self-center"
