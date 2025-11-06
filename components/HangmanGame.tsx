@@ -315,9 +315,9 @@ export default function HangmanGame() {
             </div>
 
             {/* QWERTY Keyboard (left side) */}
-            <div className="mt-2 flex flex-col items-center gap-2">
+            <div className="mt-2 flex flex-col items-center gap-3">
               {KEY_ROWS.map((row) => (
-                <div key={row} className="flex gap-2">
+                <div key={row} className="flex gap-3">
                   {row.split("").map((l) => {
                     const used = guessed.has(l)
                     return (
@@ -325,8 +325,8 @@ export default function HangmanGame() {
                         key={l}
                         onClick={() => onGuess(l)}
                         disabled={used || status !== "playing" || isPaused}
-                        className={`btn-3d-red btn-compact w-10 ${
-                          used ? "opacity-50 cursor-not-allowed" : "hover:brightness-110"
+                        className={`bg-transparent text-black cabin-sketch-bold text-2xl w-12 h-12 flex items-center justify-center ${
+                          used ? "opacity-50 cursor-not-allowed" : ""
                         }`}
                       >
                         {l}
