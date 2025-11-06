@@ -264,11 +264,11 @@ export default function HangmanGame() {
         className="relative z-10 will-change-transform"
       >
         {/* Top-left badge: guesses left */}
-        <div className="absolute top-16 left-2 bg-white text-black rounded-lg px-3 py-1 shadow-md border border-gray-200">
+        <div className="absolute top-16 left-2 text-black">
           <span className="cabin-sketch-bold text-sm tracking-wide uppercase">Guesses left: {Math.max(0, MAX_WRONG - wrong)}</span>
         </div>
         {/* Top-right badge: level */}
-        <div className="absolute top-16 right-2 bg-white text-black rounded-lg px-3 py-1 shadow-md border border-gray-200">
+        <div className="absolute top-16 right-2 text-black">
           <span className="cabin-sketch-bold text-sm tracking-wide uppercase">Level: {currentLevelName}</span>
         </div>
         
@@ -285,22 +285,14 @@ export default function HangmanGame() {
           <div className="relative rounded-2xl bg-transparent p-5 flex flex-col">
             {/* Hint banner above guess area */}
             <div
-              className="inline-block bg-white rounded-lg px-3 py-2 mt-2 mb-3 border-2 border-gray-300 self-center"
-              style={{
-                boxShadow: "0 8px 16px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8)",
-              }}
+              className="inline-block bg-transparent mt-2 mb-3 self-center"
             >
               <p className="text-sm sm:text-base cabin-sketch-bold text-black tracking-wide" style={{ letterSpacing: "0.03em" }}>
                 Hint: {hintText}
               </p>
             </div>
             {/* Wood board word area */}
-            <div
-              className="relative mx-auto w-full max-w-[520px] rounded-xl shadow-lg"
-              style={{
-                minHeight: "180px",
-              }}
-            >
+            <div className="relative mx-auto w-full max-w-[520px]">
               <div className="relative z-10 flex items-center justify-center h-full px-6 py-8">
                 <div className="flex items-center justify-center gap-3">
                   {targetWord.split("").map((ch, idx) => (
