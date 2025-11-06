@@ -246,7 +246,7 @@ export default function HangmanGame() {
         {/* Main layout: two columns filling remaining height */}
         <div style={{ height: BASE_HEIGHT - 86 }} className="px-4 grid grid-cols-2 gap-6">
           {/* Left: Word on wood board + keyboard */}
-          <div className="relative rounded-2xl bg-gradient-to-b from-[#0a1a2f] to-[#0b1220] p-5 border border-white/10 flex flex-col">
+          <div className="relative rounded-2xl bg-transparent p-5 flex flex-col">
             {/* Level badge */}
             <div
               className="inline-block bg-blue-500 text-white rounded-lg px-3 py-1 mb-2 self-center shadow-md"
@@ -269,15 +269,11 @@ export default function HangmanGame() {
             <div
               className="relative mx-auto w-full max-w-[520px] rounded-xl shadow-lg"
               style={{
-                backgroundImage: "url('/wood_board 1.svg')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
                 minHeight: "180px",
               }}
             >
-              <div className="absolute inset-0 bg-black/10 rounded-xl" />
               <div className="relative z-10 flex items-center justify-center h-full px-6 py-8">
-                <div className="text-center luckiest-guy-regular text-4xl tracking-wider">
+                <div className="text-center luckiest-guy-regular text-4xl tracking-wider text-black">
                   {display}
                 </div>
               </div>
@@ -332,7 +328,7 @@ export default function HangmanGame() {
           </div>
 
           {/* Right: Gallows & figure with counter */}
-          <div className="relative rounded-2xl bg-gradient-to-b from-[#0a1a2f] to-[#0b1220] p-5 border border-white/10 flex flex-col">
+          <div className="relative rounded-2xl bg-transparent p-5 flex flex-col">
             <div className="flex-1">
               <div className="aspect-[1/1] w-full max-w-[420px] mx-auto">
                 <HangmanSVG wrong={wrong} />
