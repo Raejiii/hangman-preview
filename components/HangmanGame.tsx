@@ -343,7 +343,7 @@ export default function HangmanGame() {
             {/* QWERTY Keyboard (left side) */}
             <div className="mt-2 flex flex-col items-center gap-3">
               {KEY_ROWS.map((row) => (
-                <div key={row} className="flex gap-3">
+                <div key={row} className={`flex ${isSmallLandscape ? "gap-2" : "gap-3"}`}>
                   {row.split("").map((l) => {
                     const used = guessed.has(l)
                     return (
@@ -351,7 +351,7 @@ export default function HangmanGame() {
                         key={l}
                         onClick={() => onGuess(l)}
                         disabled={used || status !== "playing" || isPaused}
-                        className={`bg-transparent text-black cabin-sketch-bold text-2xl w-12 h-12 flex items-center justify-center ${
+                        className={`bg-transparent text-black cabin-sketch-bold ${isSmallLandscape ? "text-xl w-9 h-9" : "text-2xl w-12 h-12"} flex items-center justify-center ${
                           used ? "opacity-50 cursor-not-allowed" : ""
                         }`}
                       >
