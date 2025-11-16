@@ -180,4 +180,18 @@
     height: 100%;
     pointer-events: none;
   }
+
+  /* Hangman loss animation: drop and slight sway */
+  .hang-drop {
+    transform-box: fill-box;
+    transform-origin: 120px 40px;
+    animation: hangDrop 1000ms ease-out forwards;
+  }
+
+  @keyframes hangDrop {
+    0% { transform: translateY(0) rotate(0deg); }
+    60% { transform: translateY(20px) rotate(8deg); }
+    75% { transform: translateY(24px) rotate(-6deg); }
+    100% { transform: translateY(28px) rotate(3deg); }
+  }
 }

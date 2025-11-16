@@ -190,8 +190,8 @@ export default function HangmanGame() {
 
   const toggleMute = () => setIsMuted((m) => !m)
 
-  // Simple SVG hangman: gallows + 6 body parts
-  const HangmanSVG = ({ wrong }: { wrong: number }) => (
+  // Simple SVG hangman: gallows + 6 body parts; adds drop animation on loss
+  const HangmanSVG = ({ wrong, animateHang }: { wrong: number; animateHang?: boolean }) => (
     <svg viewBox="0 0 200 200" className="w-full h-full">
       {/* Gallows */}
       <line x1="20" y1="180" x2="160" y2="180" stroke="#654321" strokeWidth="6" />
@@ -199,13 +199,20 @@ export default function HangmanGame() {
       <line x1="40" y1="20" x2="120" y2="20" stroke="#654321" strokeWidth="6" />
       <line x1="120" y1="20" x2="120" y2="40" stroke="#654321" strokeWidth="6" />
 
+      {/* Rope extension shown on failure for visual drop */}
+      {animateHang && (
+        <line x1="120" y1="40" x2="120" y2="80" stroke="#654321" strokeWidth="4" />
+      )}
+
       {/* Body parts appear with wrong count */}
-      {wrong > 0 && <circle cx="120" cy="55" r="15" stroke="#000" strokeWidth="4" fill="none" />}
-      {wrong > 1 && <line x1="120" y1="70" x2="120" y2="110" stroke="#000" strokeWidth="4" />}
-      {wrong > 2 && <line x1="120" y1="80" x2="100" y2="95" stroke="#000" strokeWidth="4" />}
-      {wrong > 3 && <line x1="120" y1="80" x2="140" y2="95" stroke="#000" strokeWidth="4" />}
-      {wrong > 4 && <line x1="120" y1="110" x2="105" y2="135" stroke="#000" strokeWidth="4" />}
-      {wrong > 5 && <line x1="120" y1="110" x2="135" y2="135" stroke="#000" strokeWidth="4" />}
+      <g className={animateHang ? "hang-drop" : undefined}>
+        {wrong > 0 && <circle cx="120" cy="55" r="15" stroke="#000" strokeWidth="4" fill="none" />}
+        {wrong > 1 && <line x1="120" y1="70" x2="120" y2="110" stroke="#000" strokeWidth="4" />}
+        {wrong > 2 && <line x1="120" y1="80" x2="100" y2="95" stroke="#000" strokeWidth="4" />}
+        {wrong > 3 && <line x1="120" y1="80" x2="140" y2="95" stroke="#000" strokeWidth="4" />}
+        {wrong > 4 && <line x1="120" y1="110" x2="105" y2="135" stroke="#000" strokeWidth="4" />}
+        {wrong > 5 && <line x1="120" y1="110" x2="135" y2="135" stroke="#000" strokeWidth="4" />}
+      </g>
     </svg>
   )
 
@@ -378,7 +385,7 @@ export default function HangmanGame() {
           <div className="relative rounded-2xl bg-transparent p-5 flex flex-col">
             <div className="flex-1">
               <div className="aspect-[1/1] w-full max-w-[420px] mx-auto">
-                <HangmanSVG wrong={wrong} />
+                <HangmanSVG wrong={wrong} animateHang={status === "lost" && wrong >= 5} />
               </div>
             </div>
             <div className="mt-4 flex items-center justify-between">
